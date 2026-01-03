@@ -1,0 +1,105 @@
+/* =====================================================
+   STEP NAV SIDEBAR STYLES (Layout B)
+
+   Mini sidebar that floats on the right side of the chat.
+   Shows all steps with current highlighted.
+   ===================================================== */
+
+.step-nav-sidebar {
+  /* Sizing */
+  width: var(--step-sidebar-width);
+  min-width: var(--step-sidebar-width);
+
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
+
+  /* Appearance - light background like mockup */
+  background-color: #f5f5f5;
+  border-radius: var(--radius-sm);
+  margin: var(--spacing-md);
+  margin-left: 0;
+
+  /* Don't grow or shrink */
+  flex-shrink: 0;
+}
+
+/* Container for step buttons */
+.sidebar-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+}
+
+/* Individual step button */
+.sidebar-step {
+  /* Reset button styles */
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  /* Layout */
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-xs);
+
+  /* Text */
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-text-primary);
+
+  /* Rounded */
+  border-radius: var(--radius-sm);
+
+  /* Transition */
+  transition: all 0.15s ease;
+}
+
+/* Hover state */
+.sidebar-step:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Active/current step */
+.sidebar-step.active {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Completed steps */
+.sidebar-step.completed {
+  color: var(--color-text-primary);
+}
+
+/* Pending/future steps - grayed out */
+.sidebar-step.pending {
+  color: var(--color-text-muted);
+}
+
+/* Complete Step button at bottom */
+.sidebar-complete-btn {
+  /* Reset button styles */
+  border: none;
+  cursor: pointer;
+
+  /* Sizing */
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-top: var(--spacing-md);
+
+  /* Text */
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--color-text-primary);
+
+  /* Appearance */
+  background-color: var(--color-bg-message);
+  border-radius: var(--radius-sm);
+
+  /* Transition */
+  transition: background-color 0.15s ease;
+}
+
+.sidebar-complete-btn:hover {
+  background-color: #c5c5c5;
+}

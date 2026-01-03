@@ -1,0 +1,120 @@
+/* =====================================================
+   PLAN ARTIFACT STYLES
+
+   The bordered box showing the generated step-by-step plan.
+   Matches the "Plan Artifact" box in your mockups.
+   ===================================================== */
+
+.plan-artifact {
+  /* Sizing */
+  max-width: 350px;
+
+  /* Spacing */
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin: var(--spacing-md) 0;
+
+  /* Border - matches mockup's outlined box style */
+  border: 1.5px solid var(--color-text-primary);
+  border-radius: var(--radius-sm);
+
+  /* Background */
+  background-color: var(--color-bg-white);
+}
+
+/* Plan header with "Plan Artifact" label */
+.plan-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.plan-label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Steps list - numbered list */
+.plan-steps {
+  /* Reset default list styling but keep numbers */
+  margin: 0;
+  padding-left: var(--spacing-lg);
+  list-style-type: decimal;
+}
+
+/* Individual step */
+.plan-step {
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-primary);
+}
+
+.step-title {
+  font-weight: 400;
+}
+
+/* Sub-parts - lettered list (a, b, c) */
+.step-subparts {
+  margin: var(--spacing-xs) 0 0 var(--spacing-md);
+  padding-left: var(--spacing-md);
+  list-style-type: lower-alpha;
+}
+
+.step-subpart {
+  margin-bottom: 2px;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+/* Status text below the steps */
+.plan-status {
+  margin-top: var(--spacing-md);
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+/* Action prompt text */
+.plan-actions-prompt {
+  margin-top: var(--spacing-xs);
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* Action buttons container */
+.plan-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+/* Action button base styles */
+.plan-action-btn {
+  /* Reset button styles */
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+
+  /* Sizing */
+  padding: var(--spacing-xs) var(--spacing-md);
+
+  /* Text */
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-text-primary);
+
+  /* Appearance */
+  background-color: var(--color-bg-white);
+  border-radius: var(--radius-sm);
+
+  /* Transition */
+  transition: all 0.15s ease;
+}
+
+.plan-action-btn:hover {
+  background-color: var(--color-bg-light);
+}
+
+/* Primary action (Use Plan) - slightly more prominent */
+.plan-action-btn.primary {
+  background-color: var(--color-bg-message);
+  font-weight: 500;
+}
+
+.plan-action-btn.primary:hover {
+  background-color: #c5c5c5;
+}

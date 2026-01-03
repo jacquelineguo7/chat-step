@@ -1,0 +1,66 @@
+/* =====================================================
+   TOP NAVIGATION BAR STYLES
+
+   This creates the thin bar at the top for switching
+   between layout prototypes.
+   ===================================================== */
+
+.top-nav-bar {
+  /* Layout: items in a row */
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+
+  /* Sizing */
+  height: var(--topnav-height);
+  padding: 0 var(--spacing-lg);
+
+  /* Appearance */
+  background-color: var(--color-bg-light);
+}
+
+/* "Prototypes" label */
+.top-nav-label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Container for the tab buttons */
+.top-nav-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* Individual tab button */
+.top-nav-tab {
+  /* Reset default button styles */
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  /* Sizing and spacing */
+  padding: var(--spacing-xs) var(--spacing-md);
+
+  /* Text */
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text-primary);
+
+  /* Rounded pill shape */
+  border-radius: var(--radius-full);
+
+  /* Smooth transition for hover/active states */
+  transition: all 0.15s ease;
+}
+
+/* Hover state (when mouse is over the button) */
+.top-nav-tab:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Active state (currently selected tab) */
+.top-nav-tab.active {
+  /* Outlined pill style - matches your mockup */
+  border: 1.5px solid var(--color-text-primary);
+  background-color: transparent;
+}

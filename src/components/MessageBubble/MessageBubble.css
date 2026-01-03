@@ -1,0 +1,56 @@
+/* =====================================================
+   MESSAGE BUBBLE STYLES
+
+   Individual chat messages.
+   User messages align right, assistant messages align left.
+   ===================================================== */
+
+/* Container for positioning (left vs right) */
+.message-bubble {
+  display: flex;
+  margin-bottom: var(--spacing-md);
+}
+
+/* User messages align to the right */
+.message-bubble.user {
+  justify-content: flex-end;
+}
+
+/* Assistant messages align to the left */
+.message-bubble.assistant {
+  justify-content: flex-start;
+}
+
+/* The actual message content box */
+.message-content {
+  /* Sizing - don't take full width */
+  max-width: 70%;
+
+  /* Padding inside the bubble */
+  padding: var(--spacing-md) var(--spacing-lg);
+
+  /* Appearance */
+  background-color: var(--color-bg-message);
+
+  /* Text */
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+
+  /* Allow text to wrap and preserve line breaks */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* User messages: smaller, more compact */
+.message-bubble.user .message-content {
+  max-width: 50%;
+  border-radius: var(--radius-sm);
+}
+
+/* Assistant messages: wider, can include more content */
+.message-bubble.assistant .message-content {
+  max-width: 70%;
+  border-radius: var(--radius-sm);
+  /* Slight left border to visually distinguish */
+}
