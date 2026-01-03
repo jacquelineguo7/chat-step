@@ -1,8 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 // Vite configuration for our React app
 // This sets up fast development with hot module reloading
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
 })

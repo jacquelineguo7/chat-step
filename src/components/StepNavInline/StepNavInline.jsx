@@ -1,49 +1,29 @@
-import './StepNavInline.css'
+import { Button } from '../ui/button'
+import { cn } from '../../lib/utils'
+import { Circle, CheckCircle2 } from 'lucide-react'
 
 /**
  * StepNavInline Component (Layout A)
  *
- * Shows steps inline with the chat:
- * - Current step title appears above messages (with red dot indicator)
- * - Future steps appear grayed out below the chat, above the input
- *
- * This matches your first mockup layout where "Step One" is at the top
- * and "Step Two", "Step Three" are grayed below the input.
- *
- * PROPS:
- * - steps: array of step objects
- * - currentStepIndex: which step is active (0-indexed)
- * - onStepClick: function(index) - called when a step is clicked
- * - onCompleteStep: function - called when "Complete Step" is clicked
+ * Shows current step header with red dot indicator.
  */
-function StepNavInline({ steps, currentStepIndex, onStepClick, onCompleteStep }) {
+function StepNavInline({ steps, currentStepIndex, onStepClick }) {
   if (!steps || steps.length === 0) return null
 
   const currentStep = steps[currentStepIndex]
-  const futureSteps = steps.slice(currentStepIndex + 1)
-  const isLastStep = currentStepIndex === steps.length - 1
 
   return (
-    <>
-      {/* Current step header - shown above messages */}
-      <div className="inline-current-step">
-        {/* Red dot indicator for active step */}
-        <span className="step-indicator active"></span>
-        <span className="step-title">{currentStep.title}</span>
-      </div>
-
-      {/* This component returns two parts:
-          1. Current step header (above)
-          2. Future steps footer (exported separately for flexible placement) */}
-    </>
+    <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+      <Circle className="w-3 h-3 fill-step-active text-step-active" />
+      <span className="font-medium text-sm">{currentStep.title}</span>
+    </div>
   )
 }
 
 /**
  * StepNavInlineFooter Component
  *
- * The footer part showing future steps (grayed out).
- * This is placed between the messages and the input.
+ * Shows future steps (grayed out) and complete button.
  */
 export function StepNavInlineFooter({ steps, currentStepIndex, onStepClick, onCompleteStep }) {
   if (!steps || steps.length === 0) return null
@@ -52,22 +32,20 @@ export function StepNavInlineFooter({ steps, currentStepIndex, onStepClick, onCo
   const isLastStep = currentStepIndex === steps.length - 1
 
   return (
-    <div className="inline-footer">
-      {/* Complete Step button */}
-      <button className="complete-step-btn" onClick={onCompleteStep}>
+    <div className="px-4 py-2 border-t border-border">
+      <Button size="sm" onClick={onCompleteStep} className="mb-2">
         {isLastStep ? 'Finish' : 'Complete Step'}
-      </button>
+      </Button>
 
-      {/* Future steps (grayed out) */}
       {futureSteps.length > 0 && (
-        <div className="inline-future-steps">
+        <div className="flex flex-col gap-1">
           {futureSteps.map((step, index) => {
             const actualIndex = currentStepIndex + 1 + index
             return (
               <button
                 key={step.id || actualIndex}
-                className="future-step"
                 onClick={() => onStepClick(actualIndex)}
+                className="text-left text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
               >
                 {step.title}
               </button>

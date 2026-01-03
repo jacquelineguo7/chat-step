@@ -1,39 +1,34 @@
-import './TopNavBar.css'
+import { cn } from '../../lib/utils'
 
 /**
  * TopNavBar Component
  *
- * This is the thin navigation bar at the very top of the app.
- * It lets you switch between different layout prototypes.
- *
- * PROPS:
- * - activeLayout: 'inline' | 'sidebar' - which layout is currently selected
- * - onLayoutChange: function - called when user clicks a different layout tab
- *
- * WHAT IT RENDERS:
- * - "Prototypes" label on the left
- * - Tab buttons for each layout variant
+ * Thin navigation bar at the top for switching between layout prototypes.
+ * Uses pill-style tabs matching your mockup design.
  */
 function TopNavBar({ activeLayout, onLayoutChange }) {
-  // Define the layout options
-  // Each has an id (used in code) and a label (shown to user)
   const layouts = [
-    { id: 'inline', label: 'Idea 1' },   // Layout A: steps inline with chat
-    { id: 'sidebar', label: 'Idea 2' },  // Layout B: mini sidebar on right
+    { id: 'inline', label: 'Idea 1' },
+    { id: 'sidebar', label: 'Idea 2' },
   ]
 
   return (
-    <nav className="top-nav-bar">
-      {/* Label on the left */}
-      <span className="top-nav-label">Prototypes</span>
+    <nav className="flex items-center gap-6 h-12 px-6 bg-sidebar border-b border-border">
+      {/* Label */}
+      <span className="font-medium text-sm text-foreground">Prototypes</span>
 
       {/* Layout tabs */}
-      <div className="top-nav-tabs">
+      <div className="flex gap-2">
         {layouts.map((layout) => (
           <button
             key={layout.id}
-            className={`top-nav-tab ${activeLayout === layout.id ? 'active' : ''}`}
             onClick={() => onLayoutChange(layout.id)}
+            className={cn(
+              'px-3 py-1 text-sm rounded-full transition-all',
+              activeLayout === layout.id
+                ? 'border border-foreground text-foreground'
+                : 'text-muted-foreground hover:text-foreground hover:bg-black/5'
+            )}
           >
             {layout.label}
           </button>

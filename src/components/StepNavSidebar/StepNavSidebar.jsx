@@ -1,19 +1,11 @@
-import './StepNavSidebar.css'
+import { Button } from '../ui/button'
+import { cn } from '../../lib/utils'
+import { Check } from 'lucide-react'
 
 /**
  * StepNavSidebar Component (Layout B)
  *
- * A mini sidebar that appears on the right side of the chat.
- * Shows all steps with the current step highlighted.
- *
- * This matches your second mockup layout with the floating
- * sidebar showing "Step One", "Step Two", "Step Three".
- *
- * PROPS:
- * - steps: array of step objects
- * - currentStepIndex: which step is active (0-indexed)
- * - onStepClick: function(index) - called when a step is clicked
- * - onCompleteStep: function - called when "Complete Step" is clicked
+ * Mini sidebar showing all steps with current highlighted.
  */
 function StepNavSidebar({ steps, currentStepIndex, onStepClick, onCompleteStep }) {
   if (!steps || steps.length === 0) return null
@@ -21,11 +13,10 @@ function StepNavSidebar({ steps, currentStepIndex, onStepClick, onCompleteStep }
   const isLastStep = currentStepIndex === steps.length - 1
 
   return (
-    <aside className="step-nav-sidebar">
+    <aside className="flex flex-col w-36 min-w-36 p-3 m-3 ml-0 bg-muted rounded-lg">
       {/* Steps list */}
-      <div className="sidebar-steps">
+      <div className="flex flex-col gap-1 flex-1">
         {steps.map((step, index) => {
-          // Determine the visual state of this step
           const isActive = index === currentStepIndex
           const isCompleted = index < currentStepIndex
           const isPending = index > currentStepIndex
@@ -33,19 +24,26 @@ function StepNavSidebar({ steps, currentStepIndex, onStepClick, onCompleteStep }
           return (
             <button
               key={step.id || index}
-              className={`sidebar-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''} ${isPending ? 'pending' : ''}`}
               onClick={() => onStepClick(index)}
+              className={cn(
+                'flex items-center gap-2 text-left text-sm py-1.5 px-2 rounded transition-colors',
+                isActive && 'font-medium text-foreground',
+                isCompleted && 'text-foreground',
+                isPending && 'text-muted-foreground',
+                'hover:bg-black/5'
+              )}
             >
-              {step.title}
+              {isCompleted && <Check className="w-3 h-3" />}
+              <span className={isCompleted ? '' : 'ml-5'}>{step.title}</span>
             </button>
           )
         })}
       </div>
 
-      {/* Complete Step button */}
-      <button className="sidebar-complete-btn" onClick={onCompleteStep}>
+      {/* Complete button */}
+      <Button size="sm" onClick={onCompleteStep} className="mt-3 text-xs">
         {isLastStep ? 'Finish' : 'Complete Step'}
-      </button>
+      </Button>
     </aside>
   )
 }

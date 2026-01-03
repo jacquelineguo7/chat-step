@@ -1,55 +1,57 @@
 import { useChatContext } from '../../context/ChatContext'
-import './ChatSidebar.css'
+import { Button } from '../ui/button'
+import { ScrollArea } from '../ui/scroll-area'
+import { cn } from '../../lib/utils'
+import { Plus } from 'lucide-react'
 
 /**
  * ChatSidebar Component
  *
- * The left sidebar showing all chat threads.
- * This matches the "Chats" panel in your mockups with:
- * - "Chats" header
- * - List of chat threads
- * - Currently selected thread is highlighted
- *
- * It uses the ChatContext to:
- * - Get the list of threads
- * - Know which thread is selected
- * - Select a different thread
- * - Create a new thread
+ * Left sidebar showing all chat threads.
  */
 function ChatSidebar() {
-  // Get data and functions from our context
   const {
-    threads,           // Array of all chat threads
-    currentThreadId,   // ID of the currently selected thread
-    selectThread,      // Function to select a thread
-    createThread,      // Function to create a new thread
+    threads,
+    currentThreadId,
+    selectThread,
+    createThread,
   } = useChatContext()
 
   return (
-    <aside className="chat-sidebar">
-      {/* Header with "Chats" label */}
-      <div className="sidebar-header">
-        <h2 className="sidebar-title">Chats</h2>
-      </div>
+    <aside className="flex flex-col w-56 min-w-56 h-full bg-sidebar p-4">
+      {/* Header */}
+      <h2 className="text-sm font-medium mb-3">Chats</h2>
 
-      {/* List of chat threads */}
-      <div className="thread-list">
-        {threads.map((thread) => (
-          <button
-            key={thread.id}
-            className={`thread-item ${thread.id === currentThreadId ? 'active' : ''}`}
-            onClick={() => selectThread(thread.id)}
-          >
-            {/* Thread title */}
-            <span className="thread-title">{thread.title}</span>
-          </button>
-        ))}
-      </div>
+      {/* Thread list */}
+      <ScrollArea className="flex-1">
+        <div className="flex flex-col gap-1">
+          {threads.map((thread) => (
+            <button
+              key={thread.id}
+              onClick={() => selectThread(thread.id)}
+              className={cn(
+                'w-full text-left px-3 py-2 text-sm rounded-md transition-colors truncate',
+                thread.id === currentThreadId
+                  ? 'bg-black/15 text-foreground'
+                  : 'text-foreground hover:bg-black/5'
+              )}
+            >
+              {thread.title}
+            </button>
+          ))}
+        </div>
+      </ScrollArea>
 
-      {/* New chat button at the bottom */}
-      <button className="new-chat-button" onClick={createThread}>
-        + New Chat
-      </button>
+      {/* New chat button */}
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={createThread}
+        className="mt-3 w-full"
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        New Chat
+      </Button>
     </aside>
   )
 }

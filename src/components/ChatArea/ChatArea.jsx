@@ -6,28 +6,20 @@ import ChatInput from '../ChatInput/ChatInput'
 import PlanArtifact from '../PlanArtifact/PlanArtifact'
 import StepNavInline, { StepNavInlineFooter } from '../StepNavInline/StepNavInline'
 import StepNavSidebar from '../StepNavSidebar/StepNavSidebar'
-import './ChatArea.css'
+import { ScrollArea } from '../ui/scroll-area'
+import { cn } from '../../lib/utils'
+import { Circle, Loader2 } from 'lucide-react'
 
 /**
  * ChatArea Component
  *
- * The main chat area where conversations happen.
- * This is the most complex component as it:
- * 1. Shows messages and the plan artifact
- * 2. Handles sending messages and generating plans
- * 3. Switches between layout variants (inline vs sidebar)
- * 4. Manages the step-by-step execution flow
- *
- * PROPS:
- * - layout: 'inline' | 'sidebar' - which layout variant to use
- *
- * PHASES:
- * - 'chatting': Normal chat, no plan yet
- * - 'planning': Plan has been generated, waiting for user to accept
- * - 'executing': User accepted plan, working through steps
+ * REDESIGNED: The step-by-step interface is now an EXTENSION of the main chat,
+ * not a replacement. When executing a plan:
+ * - Main chat thread (with plan) remains visible and scrollable above
+ * - Current step appears as a continuation below with its own messages
+ * - This creates a unified thread experience
  */
 function ChatArea({ layout }) {
-  // Get state and functions from context
   const {
     phase,
     messages,
@@ -44,10 +36,7 @@ function ChatArea({ layout }) {
     setIsLoading,
   } = useChatContext()
 
-  // Get Gemini API functions
-  const { createPlan, sendStepMessage, sendChatMessage, isLoading: apiLoading } = useGemini()
-
-  // Ref for scrolling to bottom of messages
+  const { createPlan, sendStepMessage, isLoading: apiLoading } = useGemini()
   const messagesEndRef = useRef(null)
 
   // Scroll to bottom when new messages arrive
@@ -55,29 +44,19 @@ function ChatArea({ layout }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, plan?.steps?.[currentStepIndex]?.messages])
 
-  /**
-   * Handle sending a message
-   * Behavior depends on current phase
-   */
   const handleSendMessage = async (content) => {
     if (phase === 'chatting' || phase === 'planning') {
-      // Add user message to chat
       addMessage('user', content)
 
-      // Update thread title if this is the first message
       if (messages.length === 0) {
-        // Use first ~30 chars of message as title
         const title = content.length > 30 ? content.substring(0, 30) + '...' : content
         updateThreadTitle(title)
       }
 
       setIsLoading(true)
-
-      // Generate a plan from the user's request
       const generatedPlan = await createPlan(content)
 
       if (generatedPlan) {
-        // Add assistant message acknowledging the request
         addMessage('assistant', "I've created a plan for you. Take a look and let me know if you'd like to use it, modify it, or start over.")
         setGeneratedPlan(generatedPlan)
       } else {
@@ -86,12 +65,9 @@ function ChatArea({ layout }) {
 
       setIsLoading(false)
     } else if (phase === 'executing') {
-      // We're in step mode - add message to current step
       addStepMessage('user', content)
-
       setIsLoading(true)
 
-      // Get AI response for this step
       const currentStep = plan.steps[currentStepIndex]
       const completedSteps = plan.steps.slice(0, currentStepIndex)
       const response = await sendStepMessage(
@@ -111,73 +87,78 @@ function ChatArea({ layout }) {
     }
   }
 
-  /**
-   * Handle "Use Plan" button click
-   */
   const handleUsePlan = () => {
     acceptPlan()
   }
 
-  /**
-   * Get the messages to display based on current phase
-   */
-  const getDisplayMessages = () => {
-    if (phase === 'executing' && plan) {
-      // In executing phase, show only current step's messages
-      return plan.steps[currentStepIndex]?.messages || []
-    }
-    // In chatting/planning phase, show main messages
-    return messages
-  }
-
-  const displayMessages = getDisplayMessages()
   const currentStep = plan?.steps?.[currentStepIndex]
+  const currentStepMessages = currentStep?.messages || []
+  const loading = isLoading || apiLoading
 
   return (
-    <main className={`chat-area layout-${layout}`}>
-      {/* Wrapper for chat content and optional sidebar */}
-      <div className="chat-area-wrapper">
+    <main className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex">
         {/* Main chat column */}
-        <div className="chat-main">
-          {/* Step header for inline layout when executing */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Step header for inline layout */}
           {phase === 'executing' && layout === 'inline' && plan && (
             <StepNavInline
               steps={plan.steps}
               currentStepIndex={currentStepIndex}
               onStepClick={goToStep}
-              onCompleteStep={completeCurrentStep}
             />
           )}
 
-          {/* Messages area */}
-          <div className="messages-container">
-            {/* Show messages */}
-            {displayMessages.map((message) => (
+          {/* Messages area - shows BOTH main chat AND step messages as one thread */}
+          <ScrollArea className="flex-1 p-4">
+            {/* Main chat messages - always visible */}
+            {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
             ))}
 
-            {/* Show plan artifact in planning phase */}
-            {phase === 'planning' && plan && (
-              <PlanArtifact
-                plan={plan}
-                onUsePlan={handleUsePlan}
-              />
+            {/* Plan artifact - shown in planning phase or when executing */}
+            {(phase === 'planning' || phase === 'executing') && plan && (
+              <div className="mb-4">
+                <PlanArtifact
+                  plan={plan}
+                  onUsePlan={phase === 'planning' ? handleUsePlan : undefined}
+                />
+              </div>
+            )}
+
+            {/* Step section header - visual separator when in executing phase */}
+            {phase === 'executing' && plan && (
+              <div className="my-4 pt-4 border-t border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Circle className="w-2.5 h-2.5 fill-step-active text-step-active" />
+                  <span className="text-sm font-medium">{currentStep?.title}</span>
+                  {currentStep?.description && (
+                    <span className="text-xs text-muted-foreground">
+                      — {currentStep.description}
+                    </span>
+                  )}
+                </div>
+
+                {/* Step messages */}
+                {currentStepMessages.map((message) => (
+                  <MessageBubble key={message.id} message={message} />
+                ))}
+              </div>
             )}
 
             {/* Loading indicator */}
-            {(isLoading || apiLoading) && (
-              <div className="loading-indicator">
-                <span className="loading-dot"></span>
-                <span className="loading-dot"></span>
-                <span className="loading-dot"></span>
+            {loading && (
+              <div className="flex items-center gap-2 text-muted-foreground p-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm">Thinking...</span>
               </div>
             )}
 
             {/* Scroll anchor */}
             <div ref={messagesEndRef} />
-          </div>
+          </ScrollArea>
 
-          {/* Step footer for inline layout when executing */}
+          {/* Step footer for inline layout */}
           {phase === 'executing' && layout === 'inline' && plan && (
             <StepNavInlineFooter
               steps={plan.steps}
@@ -190,7 +171,7 @@ function ChatArea({ layout }) {
           {/* Chat input */}
           <ChatInput
             onSend={handleSendMessage}
-            disabled={isLoading || apiLoading}
+            disabled={loading}
             placeholder={
               phase === 'executing'
                 ? `Ask about ${currentStep?.title || 'this step'}...`
@@ -199,7 +180,7 @@ function ChatArea({ layout }) {
           />
         </div>
 
-        {/* Mini sidebar for sidebar layout when executing */}
+        {/* Mini sidebar for sidebar layout */}
         {phase === 'executing' && layout === 'sidebar' && plan && (
           <StepNavSidebar
             steps={plan.steps}

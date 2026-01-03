@@ -1,78 +1,58 @@
-import './PlanArtifact.css'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui/card'
+import { Button } from '../ui/button'
 
 /**
  * PlanArtifact Component
  *
- * Displays the generated step-by-step plan in a bordered box.
- * This matches the "Plan Artifact" box in your mockups with:
- * - Title at the top
- * - Numbered steps with sub-parts
- * - Action buttons at the bottom (Use Plan, Modify, Scrap)
- *
- * PROPS:
- * - plan: object with { title, steps: [{ title, description, subParts }] }
- * - onUsePlan: function - called when user clicks "Use Plan"
- * - onModify: function - called when user clicks "Modify" (optional)
- * - onScrap: function - called when user clicks "Scrap" (optional)
+ * Displays the generated step-by-step plan in a bordered card.
  */
 function PlanArtifact({ plan, onUsePlan, onModify, onScrap }) {
   if (!plan) return null
 
   return (
-    <div className="plan-artifact">
-      {/* Plan header/title */}
-      <div className="plan-header">
-        <span className="plan-label">Plan Artifact</span>
-      </div>
+    <Card className="max-w-sm border-foreground">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">Plan Artifact</CardTitle>
+      </CardHeader>
 
-      {/* Steps list */}
-      <ol className="plan-steps">
-        {plan.steps.map((step, index) => (
-          <li key={step.id || index} className="plan-step">
-            {/* Step title */}
-            <span className="step-title">{step.title}</span>
+      <CardContent>
+        {/* Steps list */}
+        <ol className="list-decimal list-inside space-y-2 text-sm">
+          {plan.steps.map((step, index) => (
+            <li key={step.id || index}>
+              <span>{step.title}</span>
+              {step.subParts && step.subParts.length > 0 && (
+                <ol className="list-[lower-alpha] list-inside ml-4 mt-1 space-y-0.5 text-muted-foreground">
+                  {step.subParts.map((subPart, subIndex) => (
+                    <li key={subIndex} className="text-xs">{subPart}</li>
+                  ))}
+                </ol>
+              )}
+            </li>
+          ))}
+        </ol>
 
-            {/* Sub-parts (if any) */}
-            {step.subParts && step.subParts.length > 0 && (
-              <ol className="step-subparts" type="a">
-                {step.subParts.map((subPart, subIndex) => (
-                  <li key={subIndex} className="step-subpart">
-                    {subPart}
-                  </li>
-                ))}
-              </ol>
-            )}
-          </li>
-        ))}
-      </ol>
+        {/* Status */}
+        <p className="mt-4 text-sm">Plan Artifact Created</p>
+        <p className="text-xs text-muted-foreground">Use Plan? Modify? Scrap and Redo?</p>
+      </CardContent>
 
-      {/* Status text */}
-      <div className="plan-status">
-        Plan Artifact Created
-      </div>
-
-      {/* Action prompt */}
-      <div className="plan-actions-prompt">
-        Use Plan? Modify? Scrap and Redo?
-      </div>
-
-      {/* Action buttons */}
-      <div className="plan-actions">
-        <button className="plan-action-btn primary" onClick={onUsePlan}>
+      <CardFooter className="gap-2">
+        <Button size="sm" onClick={onUsePlan}>
           Use Plan
-        </button>
+        </Button>
         {onModify && (
-          <button className="plan-action-btn" onClick={onModify}>
+          <Button size="sm" variant="outline" onClick={onModify}>
             Modify
-          </button>
+          </Button>
         )}
         {onScrap && (
-          <button className="plan-action-btn" onClick={onScrap}>
+          <Button size="sm" variant="outline" onClick={onScrap}>
             Scrap
-          </button>
+          </Button>
         )}
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   )
 }
 
